@@ -23,24 +23,38 @@ def main(bg):
     cameraCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     cameraFPS = cameraCap.get(cv2.CAP_PROP_FPS)
     print("cameraFPS:", cameraFPS)
-    videoCap = cv2.VideoCapture(bg)
-    videoFPS = videoCap.get(cv2.CAP_PROP_FPS)
-    print("videoFPS:", videoFPS)
-    videoFrameCount = videoCap.get(cv2.CAP_PROP_FRAME_COUNT)
-    print("videoFrameCount:", videoFrameCount)
-    skipFrame = int(videoFPS / cameraFPS) * 2
-    print("skipFrame:", skipFrame)
+
     dummyCamera = DummyCamera(None)
-    framePos = 0
+
+    videoCap = None
+    if bg.lower().endswith('.mp4'):
+        # background movie mode
+        videoCap = cv2.VideoCapture(bg)
+        videoFPS = videoCap.get(cv2.CAP_PROP_FPS)
+        print("videoFPS:", videoFPS)
+        videoFrameCount = videoCap.get(cv2.CAP_PROP_FRAME_COUNT)
+        print("videoFrameCount:", videoFrameCount)
+        skipFrame = int(videoFPS / cameraFPS) * 2
+        print("skipFrame:", skipFrame)
+        framePos = 0
+    else:
+        # background image mode
+        bgImage = cv2.imread(bg)
+
     while True:
         k = cv2.waitKey(1)
         if k == 27:
             break
-        videoCap.set(1, framePos)
-        ret, videoFrame = videoCap.read()
-        framePos += skipFrame
-        if framePos >= videoFrameCount:
-            framePos = 0
+
+        if videoCap:
+            videoCap.set(1, framePos)
+            ret, videoFrame = videoCap.read()
+            framePos += skipFrame
+            if framePos >= videoFrameCount:
+                framePos = 0
+        else:
+            videoFrame = bgImage.copy()
+
         ret, cameraFrame = cameraCap.read()
         videoShape = videoFrame.shape
         cameraShape = cameraFrame.shape
@@ -62,7 +76,6 @@ def main(bg):
     cameraCap.release()
     dummyCamera.release()
     cv2.destroyAllWindows()
-    print('done')
 
 def pick_color(event, x, y, flags, param):
     if event != cv2.EVENT_LBUTTONDOWN:
@@ -89,8 +102,6 @@ def removeNoise(hsvMask):
     for c in contours:
         cv2.fillConvexPoly(hsvMask, c, 255)
     videoMask = cv2.cvtColor(hsvMask, cv2.COLOR_GRAY2BGR)
-
-
     cv2.imshow("remove noise", debugFrame)
 
 
@@ -113,7 +124,7 @@ def makeMask(cameraFrame):
     #hsvMask = cv2.dilate(hsvMask, None, iterations=1)
     #hsvMask = cv2.erode(hsvMask, None, iterations=1)
     #cv2.imshow("hsvMask2", hsvMask)
-    hsvMask = cv2.GaussianBlur(hsvMask, (17, 17), 0)
+    hsvMask = cv2.GaussianBlur(hsvMask, (11, 11), 0)
     #cv2.imshow("mask", mask)
     #cv2.imshow("hsvMask3", hsvMask)
     videoMask = cv2.cvtColor(hsvMask, cv2.COLOR_GRAY2BGR)

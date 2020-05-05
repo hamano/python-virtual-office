@@ -2,13 +2,14 @@
 
 ## 概要
 
+* 背景(画像・動画どちらでも)
+
+<img src="bg.jpg" width="50%" />
+
+
 * 物理カメラ
 
 <img src="camera.png" width="50%" />
-
-* 背景
-
-<img src="bg.jpg" width="50%" />
 
 * 仮想カメラ出力
 

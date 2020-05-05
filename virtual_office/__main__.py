@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from binascii import hexlify
@@ -11,17 +11,27 @@ import pprint
 import sys
 import v4l2
 
+# クロマキーのHSV色レンジ
 hsvLower =  np.array([55, 50, 80])
 hsvUpper =  np.array([90, 190, 255])
 
 @click.command()
+@click.option('--camera')
 @click.argument('bg')
-def main(bg):
+def main(camera, bg):
     print("OpenCV:", cv2.__version__)
-    cameraCap = cv2.VideoCapture(-1)
+
+    # open real camera
+    if camera:
+        cameraCap = cv2.VideoCapture(camera)
+    else:
+        cameraCap = cv2.VideoCapture(-1)
     cameraCap.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
     cameraCap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
     cameraFPS = cameraCap.get(cv2.CAP_PROP_FPS)
+    cameraWidth = cameraCap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    cameraHeight = cameraCap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    print("cameraSize: {}x{}".format(cameraWidth, cameraHeight))
     print("cameraFPS:", cameraFPS)
 
     dummyCamera = DummyCamera(None)
@@ -97,7 +107,7 @@ def removeNoise(hsvMask):
     contours, _ = cv2.findContours(cv2.bitwise_not(hsvMask),
                                    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     debugFrame = cv2.drawContours(debugFrame, contours, -1, (0,0,255), 2)
-    contours = list(filter(lambda c: cv2.contourArea(c) < 5000, contours))
+    contours = list(filter(lambda c: cv2.contourArea(c) < 10000, contours))
     debugFrame = cv2.drawContours(debugFrame, contours, -1, (0,255,0), 2)
     for c in contours:
         cv2.fillConvexPoly(hsvMask, c, 255)

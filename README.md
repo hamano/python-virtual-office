@@ -3,13 +3,13 @@
 ## 概要
 
 * 物理カメラ
-![カメラ](camera.png = 100x)
+![カメラ](camera.png){:height="50%" width="50%"}
 
 * 背景
-![背景](bg.jpg = 100x)
+![背景](bg.jpg){:height="50%" width="50%"}
 
 * 仮想カメラ出力
-![出力](output.png = 100x)
+![出力](output.png){:height="50%" width="50%"}
 
 ## 準備
 

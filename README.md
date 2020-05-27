@@ -2,10 +2,11 @@
 
 ## 概要
 
+実カメラと背景を合成して仮想カメラに出力します。
+
 * 背景(画像・動画どちらでも)
 
 <img src="bg.jpg" width="50%" />
-
 
 * 物理カメラ
 
@@ -32,11 +33,13 @@ $ poetry update
 
 ## 実行
 
+実カメラ(/dev/video0)、仮想カメラ(/dev/video2)の場合はデバイスを自動検出します。
+
 ~~~
 $ poetry run main bg.jpg
 ~~~
 
-* 物理カメラを指定
+物理カメラが複数ある場合は指定`--camera`オプションで指定します。
 
 ~~~
 $ poetry run main --camera=/dev/video2 bg.jpg

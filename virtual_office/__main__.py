@@ -13,7 +13,7 @@ import v4l2
 
 # クロマキーのHSV色レンジ
 hsvLower =  np.array([55, 50, 80])
-hsvUpper =  np.array([90, 190, 255])
+hsvUpper =  np.array([90, 200, 255])
 
 @click.command()
 @click.option('--camera')
